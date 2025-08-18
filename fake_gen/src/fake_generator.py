@@ -1,7 +1,6 @@
 from faker import Faker
 from faker.providers import BaseProvider, DynamicProvider
 from src.event_model import Event
-from random import randint
 
 fake = Faker()
 
@@ -39,9 +38,9 @@ class IDProvider(BaseProvider):
             str: A randomly generated UUID string.
         """
         if type == "user":
-            return "user" + "{0:03}".format(randint(0, 999))
+            return "user" + "{0:03}".format(fake.random_int(min=1, max=999))
         elif type == "product":
-            return "product" + "{0:03}".format(randint(0, 999))
+            return "product" + "{0:03}".format(fake.random_int(min=1, max=999))
         else:
             raise ValueError("Invalid type specified. Use 'user' or 'product'.")
 
