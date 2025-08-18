@@ -1,0 +1,7 @@
+[project]
+name = "fake-gen"
+version = "0.1.0"
+description = "Generates fake data for testing purposes."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
