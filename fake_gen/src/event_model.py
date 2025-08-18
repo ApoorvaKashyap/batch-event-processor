@@ -19,5 +19,19 @@ class Event:
     productId: str
     sessionDuration: int
 
+    def __init__(
+        self,
+        timestamp: datetime,
+        userId: str,
+        eventType: str,
+        productId: str,
+        sessionDuration: int,
+    ):
+        self.timestamp = timestamp
+        self.userId = userId
+        self.eventType = eventType
+        self.productId = productId
+        self.sessionDuration = sessionDuration
+
     def __repr__(self) -> str:
-        return f"Event(timestamp={self.timestamp}, userId={self.userId}, eventType={self.eventType}, productId={self.productId}, sessionDuration={self.sessionDuration})"
+        return f"Event(timestamp={self.timestamp.isoformat(timespec='seconds')}, userId={self.userId}, eventType={self.eventType}, productId={self.productId}, sessionDuration={self.sessionDuration})"
