@@ -30,7 +30,7 @@ EventTypeProvider = DynamicProvider(
 
 
 class IDProvider(BaseProvider):
-    def id_gen(self, type: str) -> str:
+    def id_gen(self, type: str, n:int = 5) -> str:
         """
         Generate a random user ID.
 
@@ -38,9 +38,9 @@ class IDProvider(BaseProvider):
             str: A randomly generated UUID string.
         """
         if type == "user":
-            return "user" + "{0:03}".format(fake.random_int(min=1, max=999))
+            return "user" + "{0:03}".format(fake.random_int(min=1, max=n+1))
         elif type == "product":
-            return "product" + "{0:03}".format(fake.random_int(min=1, max=999))
+            return "product" + "{0:03}".format(fake.random_int(min=1, max=n+1))
         else:
             raise ValueError("Invalid type specified. Use 'user' or 'product'.")
 
@@ -50,7 +50,7 @@ fake.add_provider(IDProvider)
 
 
 class EventProvider(BaseProvider):
-    def event(self) -> Event:
+    def event(self, n_users, n_products) -> Event:
         """
         Generate a fake event with random attributes.
 
@@ -58,9 +58,9 @@ class EventProvider(BaseProvider):
             Event: An instance of the Event class with randomly generated attributes.
         """
         timestamp = fake.date_time_this_year()
-        userId = fake.id_gen("user")
+        userId = fake.id_gen("user", n_users)
         eventType = fake.event_type()
-        productId = fake.id_gen("product")
+        productId = fake.id_gen("product", n_products)
         sessionDuration = fake.random_int(min=30, max=999)
 
         return Event(
