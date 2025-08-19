@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 
 
 class Event:
@@ -35,3 +36,17 @@ class Event:
 
     def __repr__(self) -> str:
         return f"Event(timestamp={self.timestamp.isoformat(timespec='seconds')}, userId={self.userId}, eventType={self.eventType}, productId={self.productId}, sessionDuration={self.sessionDuration})"
+
+    def json(self) -> str:
+        """
+        Convert the event to a JSON string.
+        """
+        return json.dumps(
+            {
+                "timestamp": self.timestamp.isoformat(timespec="seconds"),
+                "userId": self.userId,
+                "eventType": self.eventType,
+                "productId": self.productId,
+                "sessionDuration": self.sessionDuration,
+            }
+        )

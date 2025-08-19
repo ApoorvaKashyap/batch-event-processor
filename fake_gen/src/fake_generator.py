@@ -30,7 +30,7 @@ EventTypeProvider = DynamicProvider(
 
 
 class IDProvider(BaseProvider):
-    def id_gen(self, type: str, n:int = 5) -> str:
+    def id_gen(self, type: str, n: int = 5) -> str:
         """
         Generate a random user ID.
 
@@ -38,9 +38,9 @@ class IDProvider(BaseProvider):
             str: A randomly generated UUID string.
         """
         if type == "user":
-            return "user" + "{0:03}".format(fake.random_int(min=1, max=n+1))
+            return "user" + "{0:03}".format(fake.random_int(min=1, max=n))
         elif type == "product":
-            return "product" + "{0:03}".format(fake.random_int(min=1, max=n+1))
+            return "product" + "{0:03}".format(fake.random_int(min=1, max=n))
         else:
             raise ValueError("Invalid type specified. Use 'user' or 'product'.")
 
