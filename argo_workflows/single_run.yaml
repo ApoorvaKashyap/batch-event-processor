@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: batch-processor-
+spec:
+  entrypoint: main
+  volumeClaimTemplates:
+    - metadata:
+        name: batches-volume-claim
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 256Mi
+  templates:
+    - name: main
+      steps:
+        - - name: fake-gen
+            template: fake-gen
+        - - name: aggregator
+            template: aggregator
+
+    - name: fake-gen
+      container:
+        image: fake_gen:latest
+        imagePullPolicy: Never
+        command: ["uv"]
+        args: ["run", "/app/main.py"]
+        volumeMounts:
+          - name: batches-volume-claim
+            mountPath: /data/
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "128Mi"
+            cpu: "125m"
+    - name: aggregator
+      container:
+        image: aggregator:latest
+        imagePullPolicy: Never
+        command: ["uv"]
+        args: ["run", "/app/main.py"]
+        env:
+          - name: DB_USER
+            value: user
+          - name: DB_PASSWORD
+            value: password
+          - name: DB_URL
+            value: postgres
+          - name: DB_NAME
+            value: database
+          - name: DB_PORT
+            value: "5432"
+        volumeMounts:
+          - name: batches-volume-claim
+            mountPath: /data
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "128Mi"
+            cpu: "125m"
