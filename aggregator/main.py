@@ -23,7 +23,9 @@ configs = {
         "db_port": os.getenv("DB_PORT", "5432"),
     },
     "variables": {
-        "input_file": os.getenv("INPUT_FILE", "../data/events.jsonl"),  # Default input file
+        "input_file": os.getenv(
+            "INPUT_FILE", "../data/events.jsonl"
+        ),  # Default input file
     },
 }
 
