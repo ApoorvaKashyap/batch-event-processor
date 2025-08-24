@@ -4,6 +4,7 @@ metadata:
   generateName: batch-processor-
 spec:
   entrypoint: main
+  serviceAccountName: argo-workflow
   volumeClaimTemplates:
     - metadata:
         name: batches-volume-claim
