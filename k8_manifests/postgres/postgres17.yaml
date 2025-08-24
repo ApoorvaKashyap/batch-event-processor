@@ -45,7 +45,8 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   hostPath:
-    path: /data/postgresql
+    path: /tmp/data/postgresql
+    type: DirectoryOrCreate
 
 ---
 apiVersion: v1
