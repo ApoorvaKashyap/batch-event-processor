@@ -42,4 +42,8 @@ argo submit argo_workflows/gvisor_run.yaml
 kubectl port-forward -n argo deployment/argo-server 2746:2746 &
 kubectl port-forward -n default deployment/postgres 5432:5432 &
 
+# Open the Argo UI
+echo "Argo UI: http://localhost:2746"
+xdg-open http://localhost:2746
+
 
