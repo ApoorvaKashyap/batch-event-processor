@@ -54,9 +54,12 @@ The results of the workflow can be seen in the following screenshots:
 Tested on **Ubuntu Server 24.04 LTS**.
 
 <details>
-  <summary>TLDR: Scripts to set up and run everything</summary>
+  <summary><b>TLDR:</b> Scripts to set up and run everything</summary>
 
-  Handles all sections except 3.3 and 3.4 (port forwards). 
+  Handles the installations and setup of the cluster and workflow.
+  - `prep.sh`: Installs the necessary packages.
+  - `setup.sh`: Installs the cli for minikube, kubectl, and argo. 
+  - `run.sh`: Sets up the minikube cluster, argo, postgres, builds and loads the docker images, and runs the workflow.
 
   ```sh
   # Clone the repo
