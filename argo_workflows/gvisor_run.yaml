@@ -1,0 +1,131 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: gvisor-demo-
+  labels:
+    workflows.argoproj.io/archive-strategy: "false"
+spec:
+  entrypoint: security-test
+  serviceAccountName: argo-workflow
+  templates:
+    - name: security-test
+      dag:
+        tasks:
+          - name: default-runtime
+            template: default-runtime
+          - name: gvisor-runtime
+            template: gvisor-runtime
+
+    # Template for default runtime (Pod A)
+    - name: default-runtime
+      nodeSelector:
+      container:
+        image: ubuntu:24.04
+        command: ["/bin/bash"]
+        args:
+          - -c
+          - |
+            echo "=== Security Isolation Test - Default Runtime ==="
+            echo "User: $(whoami)"
+            echo "UID: $(id -u)"
+            echo 
+            echo "=== Writing to Host Filesystem Test ==="
+            echo "Attempting to write to host filesystem at /host..."
+            # Try to create a test file on the host
+            TEST_FILE="/host/default-runtime.txt"
+            echo "Test file path: $TEST_FILE"
+
+            if touch "$TEST_FILE" 2>/dev/null; then
+              ls $TEST_FILE
+              echo "✅ SUCCESS: File creation succeeded"
+              echo "File contents:" 
+              echo "Security test from default runtime at $(date)" > "$TEST_FILE"
+              cat "$TEST_FILE"
+            else
+              echo "❌ FAILED: Cannot write to host filesystem"
+              echo "Error details:"
+              touch "$TEST_FILE"
+              exit 1
+            fi
+
+            echo
+            echo "=== Test completed for default runtime ==="
+        volumeMounts:
+          - name: host-root
+            mountPath: /host
+        securityContext:
+          runAsNonRoot: false
+          runAsUser: 65534
+          runAsGroup: 65534
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+      volumes:
+        - name: host-root
+          hostPath:
+            path: /tmp/
+            type: Directory
+
+    # Template for gVisor runtime (Pod B)
+    - name: gvisor-runtime
+      podSpecPatch: |
+        runtimeClassName: gvisor
+        fsGroup: 65534
+      container:
+        image: ubuntu:24.04
+        command: ["/bin/bash"]
+        args:
+          - -c
+          - |
+            echo "=== Security Isolation Test - gVisor Runtime ==="
+            echo "User: $(whoami)"
+            echo "UID: $(id -u)"
+
+            # gVisor-specific checks
+            echo
+            echo "=== gVisor Runtime Analysis ==="
+            echo "Checking if running under gVisor sandbox..."
+            # Check for gVisor-specific indicators
+            if [ -f /proc/version ]; then
+              echo "Kernel version:"
+              cat /proc/version
+            fi
+
+            echo "=== Writing to Host Filesystem Test ==="
+            echo "Attempting to write to host filesystem at /host..."
+            # Try to create a test file on the host
+            TEST_FILE="/host/gvisor-runtime.txt"
+            echo "Test file path: $TEST_FILE"
+
+            if touch "$TEST_FILE" 2>/dev/null; then
+              ls $TEST_FILE
+              echo "✅ SUCCESS: File creation succeeded"
+              echo "File contents:" 
+              echo "Security test from gvisor runtime at $(date)" > "$TEST_FILE"
+              cat "$TEST_FILE"
+            else
+              echo "❌ FAILED: Cannot write to host filesystem"
+              echo "Error details:"
+              touch "$TEST_FILE" 2>&1 || echo "Permission denied or operation not permitted"
+              exit 1
+            fi
+
+            echo
+            echo "=== Test completed for gvisor runtime ==="
+        volumeMounts:
+          - name: host-root
+            mountPath: /host
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          runAsUser: 65534
+          runAsGroup: 65534
+          capabilities:
+            drop:
+              - ALL
+      volumes:
+        - name: host-root
+          hostPath:
+            path: /host/
+            type: DirectoryOrCreate
