@@ -12,8 +12,8 @@ You are tasked with building a batch-based event processing pipeline using **Pyt
 - Install Argo Workflows using the Quick Start manifest.
 - Deploy a simple PostgreSQL instance to store aggregated results.
 - Enable gVisor sandboxing:
-  - If using Minikube: minikube addons enable gvisor.
-  - Or manually install runsc and create a RuntimeClass named gvisor.
+  - If using Minikube: `minikube addons enable gvisor`.
+  - Or manually install `runsc` and create a RuntimeClass named `gvisor`.
 
 ### 2. Event Simulation
 
