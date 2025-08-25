@@ -21,11 +21,21 @@ kubectl apply -n argo -f "https://github.com/argoproj/argo-workflows/releases/do
 kubectl create serviceaccount argo-workflow -n default
 kubectl create rolebinding argo-workflow-rb --clusterrole=admin --serviceaccount=default:argo-workflow -n default
 
+# Wait for services to be up and running
+kubectl wait --for=condition=available --timeout=600s deployment/argo-server -n argo
+kubectl wait --for=condition=available --timeout=600s deployment/workflow-controller -n argo
+kubectl wait --for=condition=available --timeout=600s deployment/minio -n argo
+kubectl wait --for=condition=available --timeout=600s deployment/httpbin -n argo
+
 # Deploy Postgres 17
 kubectl apply -f k8_manifests/postgres/postgres17.yaml
+
+# Wait for Postgres to be up and running
+kubectl wait --for=condition=available --timeout=600s deployment/postgres -n default
 
 # Apply Argo Workflow Manifests
 argo submit argo_workflows/single_run.yaml
 argo cron create argo_workflows/cron_run.yaml
+argo submit argo_workflows/gvisor_run.yaml
 
 
