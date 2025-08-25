@@ -31,6 +31,7 @@
       - [4.3.1. Logs of pod A (default runtime)](#431-logs-of-pod-a-default-runtime)
       - [4.3.2. Logs of pod B (gvisor runtime)](#432-logs-of-pod-b-gvisor-runtime)
       - [4.4. Explanation](#44-explanation)
+  - [5. Notes](#5-notes)
 
 ---
 
@@ -96,6 +97,12 @@ Add your user to the `docker` group or run the docker commands with `sudo`.
 
 ```sh
 sudo usermod -aG docker $USER && newgrp docker
+```
+
+Start the docker service and schedule it for reboots.
+
+```sh
+sudo systemctl enable --now docker
 ```
 
 #### 2.1.3. Minikube
@@ -201,7 +208,7 @@ docker build -t aggregator:latest -f ./aggregator/Dockerfile ./aggregator/
 Start the Minikube cluster with the following command:
 
 ```sh
-minikube start --driver=docker --container-runtime=containerd
+minikube start --addons gvisor --container-runtime=containerd --docker-opt containerd=/var/run/containerd/containerd.sock
 ```
 
 #### 2.3.2. Setting up Argo
@@ -268,7 +275,7 @@ argo cron create argo_workflows/cron_run.yaml
 To access the Argo UI, you can use the following command to start a port-forwarding session:
 
 ```sh
-kubectl port-forward -n argo svc/argo-server 2746:2746
+kubectl port-forward -n argo svc/argo-server 2746:2746 &
 ```
 
 Then, open your web browser and navigate to `https://localhost:2746` to access the Argo UI.
@@ -280,7 +287,7 @@ The workflow and the cron workflow can be monitored from the UI.
 To access the PostgreSQL database, you can use the following command to start a port-forwarding session:
 
 ```sh
-kubectl port-forward svc/postgres 5432:5432
+kubectl port-forward svc/postgres 5432:5432 &
 ```
 
 Then, you can connect to the PostgreSQL database using a PostgreSQL client (like `psql` or a GUI tool) with the following connection details:
@@ -361,3 +368,9 @@ Internally, gVisor uses two key components here:
 - `directfs`: a gVisor filesystem implementation that proxies filesystem operations. For host mounts, directfs strictly controls access to ensure the container cannot escape isolation, which is why the write attempt fails.
 
 Thus, the observed difference between the control and gVisor steps stems not from Kubernetes volume configuration or permissions, but from gVisor’s syscall interception and filesystem mediation via gopher and directfs.
+
+## 5. Notes
+- The scripts `prep.sh`, `setup.sh`, and `run.sh` can be used to automate the setup and running of the workflow.
+- If there is an issue with `ImagePullBackOff`, check the `DNS` settings of the host machine.
+- The deployments may take some time. Wait a little bit before running the argo workflows. The `run.sh` script includes waiting commands to handle this.
+- Please start the port forwards before accessing the Argo UI and PostgreSQL database.
