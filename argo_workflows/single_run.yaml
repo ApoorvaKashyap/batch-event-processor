@@ -22,10 +22,10 @@ spec:
             template: aggregator
 
     - name: fake-gen
-      outputs:
-        artifacts:
-          - name: fake-events
-            path: /data/events.jsonl
+      # outputs:
+      #   artifacts:
+      #     - name: fake-events
+      #       path: /data/events.jsonl
       container:
         image: fake_gen:latest
         imagePullPolicy: Never
