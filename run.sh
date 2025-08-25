@@ -38,4 +38,8 @@ argo submit argo_workflows/single_run.yaml
 argo cron create argo_workflows/cron_run.yaml
 argo submit argo_workflows/gvisor_run.yaml
 
+# Port forwards
+kubectl port-forward -n argo deployment/argo-server 2746:2746 &
+kubectl port-forward -n default deployment/postgres 5432:5432 &
+
 
