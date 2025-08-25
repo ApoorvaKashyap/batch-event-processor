@@ -51,7 +51,7 @@ The results of the workflow can be seen in the following screenshots:
 
 ## 2. Setup
 
-Tested on **Ubuntu Server 24.04 LTS**.
+Tested on **Ubuntu Server 24.04 LTS** running on VirtualBox 7.2.0.
 
 <details>
   <summary><b>TLDR:</b> Scripts to set up and run everything</summary>
