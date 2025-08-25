@@ -1,6 +1,8 @@
 # CBR Take Home Assignment
 
 ## 1. Introduction
+This repo is a solution to a take-home assignment. The details are described in the [assignment doc](./CBR%20Assignment.md).
+
 
 ## 2. Setup
 
