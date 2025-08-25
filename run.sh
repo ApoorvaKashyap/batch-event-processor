@@ -1,4 +1,7 @@
 #!/usr/bin/bash
+
+set -eux
+
 minikube start --addons gvisor --container-runtime=containerd --docker-opt containerd=/var/run/containerd/containerd.sock
 
 # Create the docker images for fake-gen and aggregator

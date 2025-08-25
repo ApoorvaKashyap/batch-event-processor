@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -eux
+
 # Install Prerequisites
 sudo apt install curl containerd docker.io docker-buildx
 
